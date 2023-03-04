@@ -6,13 +6,13 @@ networks:
 
 services:
   db:
-    image: mysql:5.7
+    image: mysql:latest
     container_name: db
     command: --innodb-use-native-aio=0
     restart: always
     tty: true
     volumes:
-      - ./db/volume:/var/lib/mysql
+      - ./db/data:/var/lib/mysql
       - ./db/ddl:/docker-entrypoint-initdb.d
     environment:
       - MYSQL_DATABASE=appdb
@@ -21,12 +21,11 @@ services:
       - default
 
   app:
-    build:
-      context: ./app
+    build: ./app
     container_name: app
     image: joaoalmeida200/nginx-challenge-app
-    entrypoint: dockerize -wait tcp://db:3306 -timeout 20s docker-entrypoint.sh
-    command: node index.js
+    entrypoint: dockerize -wait tcp://db:3306 -timeout 20s docker-entrypoint.sh sh /usr/src/app/entrypoint.sh
+    command: npm run start
     restart: always
     volumes:
       - ./app:/usr/src/app
@@ -38,8 +37,7 @@ services:
       - db
 
   nginx:
-    build:
-      context: ./nginx
+    build: ./nginx
     container_name: nginx
     image: joaoalmeida200/nginx-challenge-proxy
     restart: always
