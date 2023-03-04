@@ -21,5 +21,5 @@ The challenge was to build the software with three services that respect the req
 To run the software just run the following command and access `http://localhost:8080`:
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
